@@ -63,7 +63,7 @@ function custom_query_vars() {
 
     $wp->add_query_var( 'tab' );
     $wp->add_query_var( 'value' );
-    add_rewrite_rule( '^custom-account/([^/]*)/([^/]*)/?', 'index.php?page_id='.$page_id.'&tab=$matches[1]&value=$matches[2]', 'top' );
+    add_rewrite_rule( '^custom-account/([^/]*)/?([^/]*)/?$', 'index.php?page_id='.$page_id.'&tab=$matches[1]&value=$matches[2]', 'top' );
  
     if( !get_option('plugin_permalinks_flushed') ) {
  
