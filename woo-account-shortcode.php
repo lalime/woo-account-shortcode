@@ -249,3 +249,25 @@ function save_user( $user_id ) {
     }
 }
 
+
+add_shortcode( 'dispute_form', 'render_dispute_form' );
+
+function render_dispute_form() {
+    $dispute_description = '';
+    $customer_orders = wc_get_orders(
+        apply_filters(
+            'woocommerce_my_account_my_orders_query',
+            array(
+                'customer' => get_current_user_id(),
+                'status'      => 'complete',
+                'posts_per_page'     => -1
+            )
+        )
+    );
+    
+	ob_start();
+    include(dirname(__FILE__) .'/views/dispute.php');
+	$out = ob_get_clean();
+
+	return $out;
+}
