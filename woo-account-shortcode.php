@@ -294,9 +294,9 @@ function render_password_update_form() {
     // show any error messages after form submission
     include(dirname(__FILE__) .'/views/notif/errors.php');
     
-    // if (isset($_GET['password-reset']) && $_GET['password-reset'] == 'true') {
+    if (isset($_GET['password-reset']) && $_GET['password-reset'] == 'true') {
         include(dirname(__FILE__) .'/views/notif/success.php');
-    // }
+    }
 
     if (is_user_logged_in()) {
         include(dirname(__FILE__) .'/views/edit-password.php');
