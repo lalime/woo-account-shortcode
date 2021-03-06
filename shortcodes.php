@@ -21,7 +21,10 @@ function woo_custom_account_callback( $atts ) {
 	$value = !empty($wp->query_vars['value'])?$wp->query_vars['value']:'';
 
 	ob_start();
-	// var_dump($atts, $wp->query_vars);
+    
+	echo '<div class="woocommerce-notices-wrapper">';
+	wc_print_notices();
+	echo '</div>';
 
 	if ( has_action( 'woocommerce_account_' . $key . '_endpoint' ) ) {
 		do_action( 'woocommerce_account_' . $key . '_endpoint', $value );
