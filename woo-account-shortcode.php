@@ -12,6 +12,22 @@ if ( ! function_exists( 'is_plugin_active' ) ){
     require_once( ABSPATH . '/wp-admin/includes/plugin.php' );
 }
 
+if ( !defined( 'DS' ) ) {
+    define( 'DS', DIRECTORY_SEPARATOR );
+}
+if ( !defined( 'WAS_DIR' ) ) {
+    define( 'WAS_DIR', plugin_dir_path( __FILE__ ) );
+}
+if ( !defined( 'WAS_URL' ) ) {
+    define( 'WAS_URL', plugin_dir_url( __FILE__ ) );
+}
+if ( !defined( 'WAS_IMG_URL' ) ) {
+    define( 'WAS_IMG_URL', WAS_URL.DS.'images' );
+}
+if ( !defined( 'WAS_VIEWS_DIR' ) ) {
+    define( 'WAS_VIEWS_DIR', WAS_DIR.DS.'views' );
+}
+
 /** 
  * Check for activated Woocommerce plugin
  * 
@@ -60,10 +76,10 @@ function custom_query_vars() {
     if( ! is_object($page_data) ) { // post not there
         return;
     }
-
+    
     $wp->add_query_var( 'tab' );
     $wp->add_query_var( 'value' );
-    add_rewrite_rule( '^custom-account/([^/]*)/?([^/]*)/?$', 'index.php?page_id='.$page_id.'&tab=$matches[1]&value=$matches[2]', 'top' );
+    add_rewrite_rule( '^custom-account/([^/]*)/?([^/]*)/?$', 'index.php?page_id='. $page_id.'&tab=$matches[1]&value=$matches[2]', 'top' );
  
     if( !get_option('plugin_permalinks_flushed') ) {
  
@@ -73,16 +89,17 @@ function custom_query_vars() {
     }
 }
 
+
 add_shortcode( 'woo_custom_account', 'woo_custom_account_callback' );
 function woo_custom_account_callback( $atts ) {
     $atts = shortcode_atts( array(
-        'endpoint' => '',
+        'tab' => '',
         'key' => 'no foo',
     ), $atts, 'woo_custom_account' );
 
 	global $wp;
-	$key = 'edit-address';// $atts['endpoint'];
-	$key = !empty($atts['tab'])?$atts['tab']: (!empty($wp->query_vars['tab'])?$wp->query_vars['tab']:'');
+	// $key =  $atts['tab']; !empty($atts['tab'])?$atts['tab']: 
+	$key = (!empty($wp->query_vars['tab'])?$wp->query_vars['tab']:'');
 	$value = !empty($wp->query_vars['value'])?$wp->query_vars['value']:'';
 
 	ob_start();
@@ -105,4 +122,3 @@ function woo_custom_account_callback( $atts ) {
 
 	return $out;
 }
-flush_rewrite_rules(false);
