@@ -52,11 +52,12 @@ function woo_needed_admin_notice() {
 add_action( 'init', 'custom_query_vars' );
 
 add_action('init', 'save_user');
+// add_action('init', 'load_woocommerce_scripts');
 
 add_action('init', 'woo_as_reset_password');
 add_action('wp_head', 'woa_theme_styles');
 add_filter('woocommerce_available_payment_gateways', 'woa_available_pg');
-add_filter('woocommerce_get_view_order_url', 'woa_get_view_order_url');
+add_filter('woocommerce_get_view_order_url', 'woa_get_view_order_url', 10, 2);
 
 add_action( 'woocommerce_save_account_details', 'woa_override_redirect' );
 add_action( 'woocommerce_customer_save_address', 'woa_override_redirect' );
