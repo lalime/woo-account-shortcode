@@ -271,3 +271,83 @@ function render_dispute_form() {
 
 	return $out;
 }
+
+add_shortcode( 'password_update_form', 'render_password_update_form' );
+
+function render_password_update_form() {
+	global $post;	
+ 
+   	if (is_singular()) :
+   		$current_url = get_permalink($post->ID);
+   	else :
+   		$pageURL = 'http';
+   		if ($_SERVER["HTTPS"] == "on") $pageURL .= "s";
+   		$pageURL .= "://";
+   		if ($_SERVER["SERVER_PORT"] != "80") $pageURL .= $_SERVER["SERVER_NAME"].":".$_SERVER["SERVER_PORT"].$_SERVER["REQUEST_URI"];
+   		else $pageURL .= $_SERVER["SERVER_NAME"].$_SERVER["REQUEST_URI"];
+   		$current_url = $pageURL;
+   	endif;		
+	$redirect = $current_url;
+
+	ob_start();
+
+    // show any error messages after form submission
+    include(dirname(__FILE__) .'/views/notif/errors.php');
+    
+    // if (isset($_GET['password-reset']) && $_GET['password-reset'] == 'true') {
+        include(dirname(__FILE__) .'/views/notif/success.php');
+    // }
+
+    if (is_user_logged_in()) {
+        include(dirname(__FILE__) .'/views/edit-password.php');
+    }
+	$out = ob_get_clean();
+
+	return $out;
+}
+ 
+if(!function_exists('woo_errors')) { 
+	// used for tracking error messages
+	function woo_errors(){
+	    static $wp_error; // Will hold global variable safely
+	    return isset($wp_error) ? $wp_error : ($wp_error = new WP_Error(null, null, null));
+	}
+}
+
+add_action('init', 'woo_as_reset_password');
+function woo_as_reset_password() {
+    // reset a users password
+    if (isset($_POST['woas_action']) && $_POST['woas_action'] == 'reset-password') {
+        global $user_ID;
+ 
+        if (!is_user_logged_in()) {
+            return;
+        }
+ 
+        if (wp_verify_nonce($_POST['woas_password_nonce'], 'rcp-password-nonce')) {
+            if ($_POST['password_1'] == '' || $_POST['password_2'] == '') {
+                // password(s) field empty
+                woo_errors()->add('password_empty', __('Please enter a password, and confirm it', 'pippin'));
+            }
+            if ($_POST['password_1'] != $_POST['password_2']) {
+                // passwords do not match
+                woo_errors()->add('password_mismatch', __('Passwords do not match', 'pippin'));
+            }
+ 
+            // retrieve all error messages, if any
+            $errors = woo_errors()->get_error_messages();
+ 
+            if (empty($errors)) {
+                // change the password here
+                $user_data = array(
+                    'ID' => $user_ID,
+                    'user_pass' => $_POST['password_1']
+                );
+                wp_update_user($user_data);
+                // send password change email here (if WP doesn't)
+                wp_redirect(add_query_arg('password-reset', 'true', $_POST['woas_redirect']));
+                exit;
+            }
+        }
+    }
+}
