@@ -222,7 +222,7 @@ function woo_as_admin_footer() {
         (function($) {
 
             // vars
-            var view = '<?php echo $this->view; ?>';
+            var view = 'edit';
 
             // add missing spinners
             var $submit = $('input.button-primary');
@@ -236,8 +236,10 @@ function woo_as_admin_footer() {
     
 }
 
+add_action('init', 'save_user');
 function save_user( $user_id ) {
-		
+    $user_id=$user_id?$user_id:get_current_user_id();
+    
     // verify nonce
     if( !acf_verify_nonce('user') ) {
         return $user_id;
