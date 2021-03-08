@@ -8,6 +8,7 @@ function do_init() {
     custom_query_vars();
     wpdocs_load_textdomain();
     woo_as_reset_password();
+    woo_as_process_dispute();
 }
   
 /**
@@ -99,7 +100,7 @@ function woo_as_reset_password() {
             return;
         }
  
-        if (wp_verify_nonce($_POST['woas_password_nonce'], 'rcp-password-nonce')) {
+        if (wp_verify_nonce($_POST['woas_password_nonce'], 'update-password-nonce')) {
             if ($_POST['password_1'] == '' || $_POST['password_2'] == '') {
                 // password(s) field empty
                 woo_errors()->add('password_empty', __('Please enter a password, and confirm it', 'pippin'));
@@ -163,6 +164,11 @@ if(!function_exists('woo_errors')) {
 	}
 }
 
+
+/** 
+ * Custom style for plugin views
+ * 
+ * */
 function woa_theme_styles(){
     wp_enqueue_style('woa-front', WAS_CSS_URL .'/front.css', array(), time());
 }
@@ -179,6 +185,10 @@ function woa_available_pg($available_gateways){
     return $_available_gateways;
 }
 
+/** 
+ * Redirect overrides after forms process
+ * 
+ * */
 function woa_override_redirect($user_id) {
     // die(var_dump($_POST));
 
@@ -199,4 +209,84 @@ function load_woocommerce_scripts() {
     if ( get_the_Id() == WOA_ENDPOINT_URL):
         include_once WC_ABSPATH . 'includes/class-wc-frontend-scripts.php';
     endif;
+}
+
+/** 
+ * Enable HTML in mail
+ * 
+ * */
+function set_html_content_type() {
+	return 'text/html';
+}
+
+/** 
+ * Dispute process
+ * 
+ * */
+function woo_as_process_dispute() {
+    // reset a users password
+    if (isset($_POST['dispute_action']) && $_POST['dispute_action'] == 'send-dispute-mail') {
+        global $user_ID;
+ 
+        if (!is_user_logged_in()) {
+            return;
+        }
+ 
+        if (isset($_POST['send_dispute_nonce']) && wp_verify_nonce($_POST['send_dispute_nonce'], 'dispute-send-nonce')) {
+            // wp_die(var_dump($_POST));
+            $order_id = (int) $_POST['dispute_transaction'];
+            $transaction = wc_get_order($order_id);
+            // retrieve all error messages, if any
+            $errors = woo_errors()->get_error_messages();
+ 
+            if (empty($errors)) {
+                // change the password here
+                
+                $to = $transaction->get_billing_email();
+                $current_user = wp_get_current_user();
+                $subject = "Litige de transaction No #". $transaction->get_id();
+                $description = sanitize_textarea_field($_POST['dispute_description']);
+
+
+                add_filter( 'wp_mail_content_type', 'set_html_content_type' );
+
+                /**
+                 * Load mail content
+                 */
+                ob_start();
+
+                include(dirname(__FILE__) .'/views/dispute.php');
+
+                $content = ob_get_clean();
+                /**
+                 * End mail content
+                 */
+
+                $status = wp_mail($to, $subject, $content);
+
+                remove_filter( 'wp_mail_content_type', 'set_html_content_type' );
+
+                // send password change email here (if WP doesn't)
+                wp_redirect(add_query_arg('ds', 1, $_POST['woas_redirect']));
+                exit;
+            }
+        }
+    }
+}
+
+function current_page_url() {
+	global $post;
+
+    if (is_singular()) :
+        $current_url = get_permalink($post->ID);
+    else :
+        $pageURL = 'http';
+        if ($_SERVER["HTTPS"] == "on") $pageURL .= "s";
+        $pageURL .= "://";
+        if ($_SERVER["SERVER_PORT"] != "80") $pageURL .= $_SERVER["SERVER_NAME"].":".$_SERVER["SERVER_PORT"].$_SERVER["REQUEST_URI"];
+        else $pageURL .= $_SERVER["SERVER_NAME"].$_SERVER["REQUEST_URI"];
+        $current_url = $pageURL;
+    endif;
+
+    return $current_url;
 }

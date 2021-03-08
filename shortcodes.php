@@ -140,6 +140,10 @@ function render_secudeal_form( $atts ) {
  */
 function render_dispute_form() {
     $dispute_description = '';
+	$redirect = current_page_url();
+    $before = '<div class="secudeal-password-update-fields">';
+    $after = '</div>';
+
     $customer_orders = wc_get_orders(
         apply_filters(
             'woocommerce_my_account_my_orders_query',
@@ -150,15 +154,26 @@ function render_dispute_form() {
             )
         )
     );
-
-    $to = "development@bordoni.me";
-    $subject = "Learning how to send an Email in WordPress";
-    $content = "WordPress knowledge";
-
-    $status = wp_mail($to, $subject, $content);
     
 	ob_start();
-    include(dirname(__FILE__) .'/views/dispute.php');
+
+    echo $before;
+
+    if(!is_user_logged_in()) {
+        include(dirname(__FILE__) .'/views/guest-notice.php'); 
+    } else {
+    
+        if (isset($_GET['ds']) && $_GET['ds'] == 1) {
+            $message = __('Litige envoyé!', 'woo-shortcodes');
+
+            include(dirname(__FILE__) .'/views/notif/success.php');
+        }
+
+        include(dirname(__FILE__) .'/views/dispute-form.php');
+    }
+
+    echo $after;
+
 	$out = ob_get_clean();
 
 	return $out;
@@ -219,7 +234,13 @@ function render_user_profile_form() {
 	ob_start();
 
     echo $before;
-    include(dirname(__FILE__) .'/views/user-info.php');
+
+    if(!is_user_logged_in()) {
+        include(dirname(__FILE__) .'/views/guest-notice.php'); 
+    } else {
+        include(dirname(__FILE__) .'/views/user-info.php');
+    }
+
     echo $after;
 
 	$out = ob_get_clean();
@@ -238,7 +259,12 @@ function render_user_gateways() {
 	ob_start();
 
     echo $before;
-    woocommerce_account_payment_methods();
+    if(!is_user_logged_in()) {
+        include(dirname(__FILE__) .'/views/guest-notice.php'); 
+    } else {
+        woocommerce_account_payment_methods();
+    }
+
     echo $after;
 
 	$out = ob_get_clean();
@@ -250,35 +276,30 @@ function render_user_gateways() {
  * Shortcode : [password_update_form]
  */
 function render_password_update_form() {
-	global $post;	
+   		
+	$redirect = current_page_url();
     $before = '<div class="secudeal-password-update-fields">';
     $after = '</div>';
- 
-   	if (is_singular()) :
-   		$current_url = get_permalink($post->ID);
-   	else :
-   		$pageURL = 'http';
-   		if ($_SERVER["HTTPS"] == "on") $pageURL .= "s";
-   		$pageURL .= "://";
-   		if ($_SERVER["SERVER_PORT"] != "80") $pageURL .= $_SERVER["SERVER_NAME"].":".$_SERVER["SERVER_PORT"].$_SERVER["REQUEST_URI"];
-   		else $pageURL .= $_SERVER["SERVER_NAME"].$_SERVER["REQUEST_URI"];
-   		$current_url = $pageURL;
-   	endif;		
-	$redirect = $current_url;
 
 	ob_start();
 
     echo $before;
 
-    // show any error messages after form submission
-    include(dirname(__FILE__) .'/views/notif/errors.php');
+    if(!is_user_logged_in()) {
+        include(dirname(__FILE__) .'/views/guest-notice.php'); 
+    } else {
+        // show any error messages after form submission
+        include(dirname(__FILE__) .'/views/notif/errors.php');
     
-    if (isset($_GET['password-reset']) && $_GET['password-reset'] == 'true') {
-        include(dirname(__FILE__) .'/views/notif/success.php');
-    }
+        if (isset($_GET['password-reset']) && $_GET['password-reset'] == 'true') {
+            $message = _e('Mot de passe modifié', 'woo-shortcodes');
 
-    if (is_user_logged_in()) {
-        include(dirname(__FILE__) .'/views/edit-password.php');
+            include(dirname(__FILE__) .'/views/notif/success.php');
+        }
+
+        if (is_user_logged_in()) {
+            include(dirname(__FILE__) .'/views/edit-password.php');
+        }
     }
 	echo $after;
 
