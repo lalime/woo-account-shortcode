@@ -3,6 +3,7 @@
 add_shortcode( 'woo_custom_account', 'woo_custom_account_callback' );
 add_shortcode( 'woo_user_orders', 'render_user_orders' );
 add_shortcode( 'woo_user_infos', 'render_user_profile_form' );
+add_shortcode( 'woo_user_gateways', 'render_user_gateways' );
 add_shortcode( 'secudeal_form', 'render_secudeal_form' );
 add_shortcode( 'dispute_form', 'render_dispute_form' );
 add_shortcode( 'password_update_form', 'render_password_update_form' );
@@ -219,6 +220,25 @@ function render_user_profile_form() {
 
     echo $before;
     include(dirname(__FILE__) .'/views/user-info.php');
+    echo $after;
+
+	$out = ob_get_clean();
+
+	return $out;
+}
+
+/**
+ * Shortcode : [woo_user_gateways]
+ */
+function render_user_gateways() {
+    
+    $before = '<div class="secudeal-payment_methods-fields">';
+    $after = '</div>';
+
+	ob_start();
+
+    echo $before;
+    woocommerce_account_payment_methods();
     echo $after;
 
 	$out = ob_get_clean();
