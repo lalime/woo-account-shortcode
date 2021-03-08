@@ -6,6 +6,7 @@
 * Version: 1.0
 * Author: Anonymous
 * Author URI: http://wordpress.com/
+* Text Domain:       woo-shortcodes
 **/
 
 if ( ! function_exists( 'is_plugin_active' ) ){
@@ -44,6 +45,14 @@ function woo_needed_admin_notice() {
      echo '<div class="notice notice-warning is-dismissible">
         <p><b>Woocommerce account custom shortcodes</b> needs woocommerce to be installed and activated to work properly.</p>
      </div>';
+}
+add_action( 'init', 'wpdocs_load_textdomain' );
+  
+/**
+ * Load plugin textdomain.
+ */
+function wpdocs_load_textdomain() {
+  load_plugin_textdomain( 'woo-shortcodes', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' ); 
 }
 
 /** 
