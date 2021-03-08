@@ -251,6 +251,8 @@ function render_user_gateways() {
  */
 function render_password_update_form() {
 	global $post;	
+    $before = '<div class="secudeal-password-update-fields">';
+    $after = '</div>';
  
    	if (is_singular()) :
    		$current_url = get_permalink($post->ID);
@@ -266,6 +268,8 @@ function render_password_update_form() {
 
 	ob_start();
 
+    echo $before;
+
     // show any error messages after form submission
     include(dirname(__FILE__) .'/views/notif/errors.php');
     
@@ -276,6 +280,8 @@ function render_password_update_form() {
     if (is_user_logged_in()) {
         include(dirname(__FILE__) .'/views/edit-password.php');
     }
+	echo $after;
+
 	$out = ob_get_clean();
 
 	return $out;
