@@ -2,6 +2,7 @@
 
 add_shortcode( 'woo_custom_account', 'woo_custom_account_callback' );
 add_shortcode( 'woo_user_orders', 'render_user_orders' );
+add_shortcode( 'woo_user_infos', 'render_user_profile_form' );
 add_shortcode( 'secudeal_form', 'render_secudeal_form' );
 add_shortcode( 'dispute_form', 'render_dispute_form' );
 add_shortcode( 'password_update_form', 'render_password_update_form' );
@@ -163,7 +164,6 @@ function render_dispute_form() {
 }
 
 
-
 /**
  * Shortcode : [woo_user_orders]
  */
@@ -197,6 +197,34 @@ function render_user_orders() {
 	return $out;
 }
 
+/**
+ * Shortcode : [woo_user_infos]
+ */
+function render_user_profile_form() {
+    $user_id = get_current_user_id();
+    $before = '<div class="secudeal-user_billing-fields">';
+    $after = '</div>';
+
+    $_billing_first_name = get_user_meta( $user_id, 'billing_first_name', true );
+    $_billing_last_name = get_user_meta( $user_id, 'billing_last_name', true );
+    $_billing_address_1 = get_user_meta( $user_id, 'billing_address_1', true );
+    $_billing_phone = get_user_meta( $user_id, 'billing_phone', true );
+    $_billing_email = get_user_meta( $user_id, 'billing_email', true );
+    $_billing_latitude = get_user_meta( $user_id, 'billing_latitude', true );
+    $_billing_longitude = get_user_meta( $user_id, 'billing_longitude', true );
+    $_billing_zipcode = get_user_meta( $user_id, 'billing_zipcode', true );
+    $_billing_city = get_user_meta( $user_id, 'billing_city', true );
+    
+	ob_start();
+
+    echo $before;
+    include(dirname(__FILE__) .'/views/user-info.php');
+    echo $after;
+
+	$out = ob_get_clean();
+
+	return $out;
+}
 
 /**
  * Shortcode : [password_update_form]
