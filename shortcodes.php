@@ -160,7 +160,7 @@ function render_dispute_form() {
     echo $before;
 
     if(!is_user_logged_in()) {
-        include(dirname(__FILE__) .'/views/guest-notice.php'); 
+        include(dirname(__FILE__) .'/views/notif/guest.php'); 
     } else {
     
         if (isset($_GET['ds']) && $_GET['ds'] == 1) {
@@ -205,7 +205,13 @@ function render_user_orders() {
 	ob_start();
 
     echo $before;
-    include(dirname(__FILE__) .'/views/transactions.php');
+
+    if(!is_user_logged_in()) {
+        include(dirname(__FILE__) .'/views/notif/guest.php'); 
+    } else {
+        include(dirname(__FILE__) .'/views/transactions.php');
+    }
+    
     echo $after;
 
 	$out = ob_get_clean();
@@ -236,7 +242,7 @@ function render_user_profile_form() {
     echo $before;
 
     if(!is_user_logged_in()) {
-        include(dirname(__FILE__) .'/views/guest-notice.php'); 
+        include(dirname(__FILE__) .'/views/notif/guest.php'); 
     } else {
         include(dirname(__FILE__) .'/views/user-info.php');
     }
@@ -260,7 +266,7 @@ function render_user_gateways() {
 
     echo $before;
     if(!is_user_logged_in()) {
-        include(dirname(__FILE__) .'/views/guest-notice.php'); 
+        include(dirname(__FILE__) .'/views/notif/guest.php'); 
     } else {
         woocommerce_account_payment_methods();
     }
@@ -286,7 +292,7 @@ function render_password_update_form() {
     echo $before;
 
     if(!is_user_logged_in()) {
-        include(dirname(__FILE__) .'/views/guest-notice.php'); 
+        include(dirname(__FILE__) .'/views/notif/guest.php'); 
     } else {
         // show any error messages after form submission
         include(dirname(__FILE__) .'/views/notif/errors.php');
