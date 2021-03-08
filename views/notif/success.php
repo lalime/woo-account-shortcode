@@ -25,5 +25,5 @@ img {
 </style>
 <div class="woas_message success" id="display-success"> 
     <img src="<?php echo WAS_IMG_URL; ?>/icon-ok.png" alt="Success" width="25" />
-    <span><?php _e('Mot de passe modifié', 'rcp'); ?></span>
+    <span><?php echo $message; ?></span>
 </div>
