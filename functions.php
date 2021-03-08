@@ -1,6 +1,23 @@
 <?php
 
 /** 
+ * Initialisation functions
+ * 
+ * */
+function do_init() {
+    custom_query_vars();
+    wpdocs_load_textdomain();
+    woo_as_reset_password();
+}
+  
+/**
+ * Load plugin textdomain.
+ */
+function wpdocs_load_textdomain() {
+  load_plugin_textdomain( 'woo-shortcodes', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' ); 
+}
+
+/** 
  * Check for activated Woocommerce plugin
  * 
  * */
@@ -28,7 +45,7 @@ function woo_acs_init() {
 
 
 /** 
- * custom_query_vars
+ * Add rules for plugin
  * 
  * */
 function custom_query_vars() {
@@ -68,6 +85,11 @@ function save_user( $user_id ) {
     }
 }
 
+
+/** 
+ * Password reset process
+ * 
+ * */
 function woo_as_reset_password() {
     // reset a users password
     if (isset($_POST['woas_action']) && $_POST['woas_action'] == 'reset-password') {
@@ -104,6 +126,7 @@ function woo_as_reset_password() {
         }
     }
 }
+
 
 function woo_as_filter_pre_load_value( $null, $post_id, $field ) {
     $field_key = $field['key'];

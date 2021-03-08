@@ -46,24 +46,12 @@ function woo_needed_admin_notice() {
         <p><b>Woocommerce account custom shortcodes</b> needs woocommerce to be installed and activated to work properly.</p>
      </div>';
 }
-add_action( 'init', 'wpdocs_load_textdomain' );
-  
-/**
- * Load plugin textdomain.
- */
-function wpdocs_load_textdomain() {
-  load_plugin_textdomain( 'woo-shortcodes', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' ); 
-}
-
-/** 
- * Add rules for plugin
- * */
-add_action( 'init', 'custom_query_vars' );
 
 add_action('init', 'save_user');
 // add_action('init', 'load_woocommerce_scripts');
 
-add_action('init', 'woo_as_reset_password');
+add_action('init', 'do_init');
+
 add_action('wp_head', 'woa_theme_styles');
 add_filter('woocommerce_available_payment_gateways', 'woa_available_pg');
 
