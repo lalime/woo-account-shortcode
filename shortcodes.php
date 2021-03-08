@@ -226,6 +226,7 @@ function render_user_profile_form() {
     $user_id = get_current_user_id();
     $before = '<div class="secudeal-user_billing-fields">';
     $after = '</div>';
+    $redirect = current_page_url();
 
     $_billing_first_name = get_user_meta( $user_id, 'billing_first_name', true );
     $_billing_last_name = get_user_meta( $user_id, 'billing_last_name', true );
@@ -236,6 +237,7 @@ function render_user_profile_form() {
     $_billing_longitude = get_user_meta( $user_id, 'billing_longitude', true );
     $_billing_zipcode = get_user_meta( $user_id, 'billing_zipcode', true );
     $_billing_city = get_user_meta( $user_id, 'billing_city', true );
+    $_billing_country = get_user_meta( $user_id, 'billing_country', true );
     
 	ob_start();
 
@@ -244,6 +246,13 @@ function render_user_profile_form() {
     if(!is_user_logged_in()) {
         include(dirname(__FILE__) .'/views/notif/guest.php'); 
     } else {
+    
+        if (isset($_GET['iup']) && $_GET['iup'] == 1) {
+            $message = __('Mot de passe modifié', 'woo-shortcodes');
+
+            include(dirname(__FILE__) .'/views/notif/success.php');
+        }
+
         include(dirname(__FILE__) .'/views/user-info.php');
     }
 
@@ -298,7 +307,7 @@ function render_password_update_form() {
         include(dirname(__FILE__) .'/views/notif/errors.php');
     
         if (isset($_GET['password-reset']) && $_GET['password-reset'] == 'true') {
-            $message = _e('Mot de passe modifié', 'woo-shortcodes');
+            $message = __('Mot de passe modifié', 'woo-shortcodes');
 
             include(dirname(__FILE__) .'/views/notif/success.php');
         }

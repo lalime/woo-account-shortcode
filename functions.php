@@ -9,6 +9,7 @@ function do_init() {
     wpdocs_load_textdomain();
     woo_as_reset_password();
     woo_as_process_dispute();
+    woo_as_process_user_infos();
 }
   
 /**
@@ -289,4 +290,48 @@ function current_page_url() {
     endif;
 
     return $current_url;
+}
+
+
+/** 
+ * Process user info update
+ * 
+ * */
+function woo_as_process_user_infos() {
+    // reset a users password
+    if (isset($_POST['woas_action']) && $_POST['woas_action'] == 'update-billing-info') {
+        global $user_ID;
+ 
+        if (!is_user_logged_in()) {
+            return;
+        }
+ 
+        if (wp_verify_nonce($_POST['woas_info_nonce'], 'update-info-nonce')) {
+            // wp_die(var_dump($user_ID, $_POST));
+            // if ($_POST['password_1'] == '' || $_POST['password_2'] == '') {
+            //     // password(s) field empty
+            //     woo_errors()->add('password_empty', __('Please enter a password, and confirm it', 'pippin'));
+            // }
+            // if ($_POST['password_1'] != $_POST['password_2']) {
+            //     // passwords do not match
+            //     woo_errors()->add('password_mismatch', __('Passwords do not match', 'pippin'));
+            // }
+ 
+            // retrieve all error messages, if any
+            $errors = woo_errors()->get_error_messages();
+ 
+            if (empty($errors)) {
+                
+                // change the password here
+                $billing = $_POST['billing'];
+                foreach ($billing as $key => $value) {
+                    update_user_meta($user_ID, $key, $value);
+                }
+
+                // send password change email here (if WP doesn't)
+                wp_redirect(add_query_arg('iup', 1, $_POST['woas_redirect']));
+                exit;
+            }
+        }
+    }
 }
