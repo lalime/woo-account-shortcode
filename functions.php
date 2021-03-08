@@ -34,7 +34,7 @@ function woo_acs_init() {
 function custom_query_vars() {
     global $wp;
  
-    $page_id = 10; 
+    $page_id = WOA_ENDPOINT_URL; 
 	$page_data = get_post( $page_id );
 	update_option('plugin_permalinks_flushed', 0);
  
@@ -141,5 +141,39 @@ if(!function_exists('woo_errors')) {
 }
 
 function woa_theme_styles(){
-    wp_enqueue_style('woa-front', WAS_CSS_URL .'/front.css', array());
+    wp_enqueue_style('woa-front', WAS_CSS_URL .'/front.css', array(), time());
+}
+
+function woa_available_pg($available_gateways){
+    $_available_gateways = [];
+    
+    foreach ( $available_gateways as $gateway ) {
+        if ( $gateway->supports( 'add_payment_method' ) || $gateway->supports( 'tokenization' ) ) {
+            $_available_gateways[ $gateway->id ] = $gateway;
+        }
+    }
+    
+    return $_available_gateways;
+}
+
+function woa_override_redirect($user_id) {
+    // die(var_dump($_POST));
+
+	ob_start();
+    if ( isset($_POST['_wp_http_referer']) && get_the_Id() == WOA_ENDPOINT_URL):
+        $redirect_url = $_POST['_wp_http_referer'];
+    else :
+        return $user_id;
+    endif;
+	$out = ob_get_clean();
+
+    wp_safe_redirect( home_url($redirect_url) );
+    exit;
+}
+
+function load_woocommerce_scripts() {
+
+    if ( get_the_Id() == WOA_ENDPOINT_URL):
+        include_once WC_ABSPATH . 'includes/class-wc-frontend-scripts.php';
+    endif;
 }
