@@ -26,10 +26,10 @@ do_action( 'woocommerce_before_edit_account_form' ); ?>
 	<?php do_action( 'woocommerce_edit_account_form' ); ?>
 
 	<p>
-		<?php wp_nonce_field( 'save_account_details', 'save-account-details-nonce' ); ?>
+
         <input type="hidden" name="woas_action" value="reset-password"/>
         <input type="hidden" name="woas_redirect" value="<?php echo $redirect; ?>"/>
-        <input type="hidden" name="woas_password_nonce" value="<?php echo wp_create_nonce('rcp-password-nonce'); ?>"/>
+        <input type="hidden" name="woas_password_nonce" value="<?php echo wp_create_nonce('update-password-nonce'); ?>"/>
 		<button type="submit" class="secudeal-Button button" name="save_account_details" value="<?php esc_attr_e( 'Save changes', 'woocommerce' ); ?>"><?php esc_html_e( 'Save changes', 'woocommerce' ); ?></button>
 	</p>
 
