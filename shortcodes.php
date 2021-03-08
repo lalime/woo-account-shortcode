@@ -1,6 +1,7 @@
 <?php
 
 add_shortcode( 'woo_custom_account', 'woo_custom_account_callback' );
+add_shortcode( 'woo_user_orders', 'render_user_orders' );
 add_shortcode( 'secudeal_form', 'render_secudeal_form' );
 add_shortcode( 'dispute_form', 'render_dispute_form' );
 add_shortcode( 'password_update_form', 'render_password_update_form' );
@@ -22,8 +23,9 @@ function woo_custom_account_callback( $atts ) {
 
 	ob_start();
     
+	echo '<div class="woocommerce-MyAccount-content">';
 	echo '<div class="woocommerce-notices-wrapper">';
-	wc_print_notices();
+	// wc_print_notices();
 	echo '</div>';
 
 	if ( has_action( 'woocommerce_account_' . $key . '_endpoint' ) ) {
@@ -38,6 +40,7 @@ function woo_custom_account_callback( $atts ) {
         )
         );
     }
+	echo '</div>';
 	$out = ob_get_clean();
 
 	return $out;
@@ -145,9 +148,50 @@ function render_dispute_form() {
             )
         )
     );
+
+    $to = "development@bordoni.me";
+    $subject = "Learning how to send an Email in WordPress";
+    $content = "WordPress knowledge";
+
+    $status = wp_mail($to, $subject, $content);
     
 	ob_start();
     include(dirname(__FILE__) .'/views/dispute.php');
+	$out = ob_get_clean();
+
+	return $out;
+}
+
+
+
+/**
+ * Shortcode : [woo_user_orders]
+ */
+function render_user_orders() {
+    $current_page    = empty( $page ) ? 1 : absint( $page );
+    $customer_orders = wc_get_orders(
+        apply_filters(
+            'woocommerce_my_account_my_orders_query',
+            array(
+                'customer' => get_current_user_id(),
+                'page'     => $current_page,
+                'posts_per_page' => 10,
+                'paginate' => true,
+            )
+        )
+    );
+    
+    $has_orders = 0 < $customer_orders->total;
+    
+    $before = '<div class="secudeal-transactions-list">';
+    $after = '</div>';
+
+	ob_start();
+
+    echo $before;
+    include(dirname(__FILE__) .'/views/transactions.php');
+    echo $after;
+
 	$out = ob_get_clean();
 
 	return $out;
