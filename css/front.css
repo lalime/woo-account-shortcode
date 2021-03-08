@@ -1,3 +1,44 @@
 body:not(.woocommerce-account) form.woocommerce-EditAccountForm.edit-account fieldset {
     display: none;
 }
+button.secudeal-Button {
+    width: 100%;
+    background: #3AD64C !important;
+    border-radius: 10px !important;
+    padding: 15px 45px 15px 45px;
+}
+input[type='text'], 
+input[type='number'], 
+input[type='email'], 
+input[type='tel'], 
+input[type='url'], 
+input[type='password'], 
+input[type='search'], 
+textarea, 
+.input-text {
+    background-color: var(--background);
+    color: var(--text);
+    border-width: 2px;
+    border-style: solid;
+    border-color: var(--border);
+    -webkit-appearance: none;
+    box-sizing: border-box;
+    font-weight: normal;
+    border-radius: 4px;
+    outline: 0;     
+    -webkit-transition: all ease-in-out 0.3s;
+    transition: all ease-in-out 0.3s;
+    font-size: 14px;
+    margin: 0;
+    vertical-align: baseline;
+    padding: 15px 45px 15px 45px;
+}
+label {
+    display: block !important;
+    font-weight: bold !Important;
+}
+.secudeal-payment_methods-fields a.button {
+    display: none;
+}
+.secudeal-payment_methods-fields .woocommerce-PaymentMethod,
+.text-center { text-align: center; }
