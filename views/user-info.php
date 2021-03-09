@@ -17,7 +17,7 @@
 
 defined('ABSPATH') || exit;
 
-$api_key = 'AIzaSyBIwzALxUPNbatRBj3Xi1Uhp0fFzwWNBkE';
+$api_key = 'AIzaSyAzjJRFrisoG3IwYPRVimSRE2ToJ7zPY-E';
 ?>
 
 <form class="secudeal-EditAccountForm edit-account" action="" method="post" >

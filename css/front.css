@@ -42,3 +42,19 @@ label {
 }
 .secudeal-payment_methods-fields .woocommerce-PaymentMethod,
 .text-center { text-align: center; }
+
+h1 {
+    text-shadow: gray 3px 3px 3px; 
+    box-shadow: gray 3px 3px 3px 3px; 
+}
+.woa-thumbnails img {
+    height: 80px;
+    padding: 1px;
+    margin: 0 10px 10px 0;
+}
+
+.woa-preview img {
+    border: 4px solid #444;
+    padding: 1px;
+    width: 800px;
+}
