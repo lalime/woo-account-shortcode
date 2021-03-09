@@ -7,6 +7,7 @@ add_shortcode( 'woo_user_gateways', 'render_user_gateways' );
 add_shortcode( 'secudeal_form', 'render_secudeal_form' );
 add_shortcode( 'dispute_form', 'render_dispute_form' );
 add_shortcode( 'password_update_form', 'render_password_update_form' );
+add_shortcode( 'secudeal_quote_form', 'render_quote_form' );
 
 
 /**
@@ -248,7 +249,7 @@ function render_user_profile_form() {
     } else {
     
         if (isset($_GET['iup']) && $_GET['iup'] == 1) {
-            $message = __('Mot de passe modifié', 'woo-shortcodes');
+            $message = __('Profil mis à jour', 'woo-shortcodes');
 
             include(dirname(__FILE__) .'/views/notif/success.php');
         }
@@ -314,6 +315,43 @@ function render_password_update_form() {
 
         if (is_user_logged_in()) {
             include(dirname(__FILE__) .'/views/edit-password.php');
+        }
+    }
+	echo $after;
+
+	$out = ob_get_clean();
+
+	return $out;
+}
+
+/**
+ * Shortcode : [secudeal_quote_form]
+ */
+function render_quote_form() {
+    
+	$quote_description = '';
+	$redirect = current_page_url();
+    $before = '<div class="secudeal-quote-form-fields">';
+    $after = '</div>';
+
+	ob_start();
+
+    echo $before;
+
+    if(!is_user_logged_in()) {
+        include(dirname(__FILE__) .'/views/notif/guest.php'); 
+    } else {
+        // show any error messages after form submission
+        include(dirname(__FILE__) .'/views/notif/errors.php');
+    
+        if (isset($_GET['qs']) && $_GET['qs'] == 1) {
+            $message = __('Devis envoyé!', 'woo-shortcodes');
+
+            include(dirname(__FILE__) .'/views/notif/success.php');
+        }
+
+        if (is_user_logged_in()) {
+            include(dirname(__FILE__) .'/views/quote-form.php');
         }
     }
 	echo $after;

@@ -58,5 +58,13 @@ add_filter('woocommerce_available_payment_gateways', 'woa_available_pg');
 add_action( 'woocommerce_save_account_details', 'woa_override_redirect' );
 add_action( 'woocommerce_customer_save_address', 'woa_override_redirect' );
 
+/**
+ * ACF Overrides
+ */
+add_action('acf/render_field_settings/type=text', 'woa_text_render_field_settings');
+// add_filter('acf/prepare_field', 'my_admin_only_prepare_field');
+add_action('acf/render_field/type=text', 'woa_acf_render_field');
+
+require_once 'dompdf/autoload.inc.php';
 include(dirname(__FILE__).'/functions.php');
 include(dirname(__FILE__).'/shortcodes.php');

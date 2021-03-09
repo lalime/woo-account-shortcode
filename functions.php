@@ -10,6 +10,8 @@ function do_init() {
     woo_as_reset_password();
     woo_as_process_dispute();
     woo_as_process_user_infos();
+    woo_as_process_quote();
+    woo_as_process_vendor_data();
 }
   
 /**
@@ -263,6 +265,10 @@ function woo_as_process_dispute() {
                  * End mail content
                  */
 
+                // $to = $transaction->get_billing_email();
+                $current_user = wp_get_current_user();
+                $subject = 'Nouveau devis';
+                $content = 'Ci-joint le devis';
                 $status = wp_mail($to, $subject, $content);
 
                 remove_filter( 'wp_mail_content_type', 'set_html_content_type' );
@@ -291,7 +297,6 @@ function current_page_url() {
 
     return $current_url;
 }
-
 
 /** 
  * Process user info update
@@ -334,4 +339,144 @@ function woo_as_process_user_infos() {
             }
         }
     }
+}
+
+/** 
+ * Process user info update
+ * 
+ * */
+function woo_as_process_quote() {
+    // reset a users password
+    if (isset($_POST['quote_action']) && $_POST['quote_action'] == 'send-quote-details') {
+        global $user_ID;
+ 
+        if (!is_user_logged_in()) {
+            return;
+        }
+ 
+        if (wp_verify_nonce($_POST['send_quote_nonce'], 'quote-send-nonce')) {
+            // wp_die(var_dump($user_ID, $_POST));
+            $current_user = wp_get_current_user();
+            $quote_first_name = $_POST['quote_first_name'];
+            $quote_last_name = $_POST['quote_last_name'];
+            $quote_email = $_POST['quote_email'];
+            $quote_price = (float) $_POST['quote_price'];
+            $quote_description = $_POST['quote_description'];
+
+            $image_src = wp_get_attachment_image_src(get_theme_mod( 'custom_logo' ), 'full');
+            $path = str_replace(get_home_url()."/wp-content", WP_CONTENT_DIR, $image_src[0]);
+            $logo_path = get_base_64($path);
+            $currency_symbol = get_woocommerce_currency_symbol(get_option('woocommerce_currency'));
+
+            ob_start();
+
+            include(dirname(__FILE__) .'/views/quote-tpl.php');
+
+            $content = ob_get_clean();
+            $file = woa_generate_file($content);
+            
+            // retrieve all error messages, if any
+            $errors = woo_errors()->get_error_messages();
+
+            if (!$file) {
+                woo_errors()->add('pdf_empty', __('Erreur generation du PDF', 'pippin'));
+            }
+ 
+            if (empty($errors)) {
+
+                $subject = 'Nouveau devis';
+                $attachments = array( $file );
+                $headers = 'From: '. $current_user->user_firstname .' '. $current_user->user_lastname .' <'. $current_user->user_email .'>' . "\r\n";
+                
+                add_filter( 'wp_mail_content_type', 'set_html_content_type' );
+
+                $status = wp_mail($to, $subject, $content, $headers, $attachments);
+
+                remove_filter( 'wp_mail_content_type', 'set_html_content_type' );
+                
+                // send password change email here (if WP doesn't)
+                wp_redirect(add_query_arg('qs', 1, $_POST['woas_redirect']));
+                exit;
+            }
+        }
+    }
+}
+
+function woa_generate_file($html) {
+    // include autoloader
+    require_once 'dompdf/autoload.inc.php';
+
+    // instantiate and use the dompdf class
+    $dompdf = new Dompdf\Dompdf();
+
+    $dompdf->loadHtml($html);
+    
+    $dompdf->set_option('isRemoteEnabled', TRUE);
+    
+    // (Optional) Setup the paper size and orientation
+    $dompdf->setPaper('A4');
+
+    // Render the HTML as PDF
+    $dompdf->render();
+
+    // Output the generated PDF to Browser
+    $output = $dompdf->output();
+
+    $filename = get_random_string(10);
+    $structure = WP_CONTENT_DIR . '/uploads/was-pdf/';
+
+    if (!file_exists($structure) && !mkdir($structure, 0777, true)) {
+        die('Failed to create folders...');
+    }
+
+    if (file_put_contents( $structure.$filename .'.pdf', $output));
+        return  $structure.$filename .'.pdf';
+    
+    return false;
+}
+
+function get_base_64($path)
+{
+    $type = pathinfo($path, PATHINFO_EXTENSION);
+    $data = file_get_contents($path);
+    return 'data:image/' . $type . ';base64,' . base64_encode($data);
+}
+
+function get_random_string($n) {
+    $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    $randomString = '';
+  
+    for ($i = 0; $i < $n; $i++) {
+        $index = rand(0, strlen($characters) - 1);
+        $randomString .= $characters[$index];
+    }
+  
+    return $randomString;
+}
+
+function woa_text_render_field_settings( $field ) {
+	
+	acf_render_field_setting( $field, array(
+		'label'			=> __('Exclude words'),
+		'instructions'	=> __('Enter words separated by a comma'),
+		'name'			=> 'display_as',
+		'type'			=> 'select',
+        'choices' 		=> array(
+            'normal'			=> __("Normal text input",'acf'),
+            'gallery' 				=> __("Multiple images",'acf'),
+        ),
+        'default_value'	=> 'normal'
+	));
+	
+}
+
+function woo_as_process_vendor_data( $field ) {
+    my_acf_save_post( $post_id );
+}
+
+function woa_acf_render_field( $field ) {
+    if ( empty($field['display_as']) || $field['display_as'] != 'gallery') 
+        return ;
+    var_dump($field['value']);
+    include dirname(__FILE__). '/views/gallery.php';
 }
