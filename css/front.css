@@ -1,8 +1,9 @@
 body:not(.woocommerce-account) form.woocommerce-EditAccountForm.edit-account fieldset {
     display: none;
 }
-button.secudeal-Button {
+button.secudeal-Button, a.secudeal-Button {
     width: 100%;
+    color:white;
     background: #3AD64C !important;
     border-radius: 10px !important;
     padding: 15px 45px 15px 45px;

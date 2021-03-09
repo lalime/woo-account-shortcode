@@ -97,16 +97,12 @@ $_orders_columns = $_array_field + $_orders_columns;
 
 	<?php do_action( 'woocommerce_before_account_orders_pagination' ); ?>
 
-	<?php if ( 1 < $customer_orders->max_num_pages ) : ?>
-		<div class="woocommerce-pagination woocommerce-pagination--without-numbers woocommerce-Pagination">
-			<?php if ( 1 !== $current_page ) : ?>
-				<a class="woocommerce-button woocommerce-button--previous woocommerce-Button woocommerce-Button--previous button" href="<?php echo esc_url( wc_get_endpoint_url( 'orders', $current_page - 1 ) ); ?>"><?php esc_html_e( 'Previous', 'woocommerce' ); ?></a>
-			<?php endif; ?>
+	<?php if ( 1 <= $customer_orders->max_num_pages ) : ?>
 
-			<?php if ( intval( $customer_orders->max_num_pages ) !== $current_page ) : ?>
-				<a class="woocommerce-button woocommerce-button--next woocommerce-Button woocommerce-Button--next button" href="<?php echo esc_url( wc_get_endpoint_url( 'orders', $current_page + 1 ) ); ?>"><?php esc_html_e( 'Next', 'woocommerce' ); ?></a>
-			<?php endif; ?>
+		<div class="woocommerce-pagination woocommerce-pagination--without-numbers woocommerce-Pagination">
+			<a class="woocommerce-button woocommerce-button--next secudeal-Button button" href="<?php echo esc_url( add_query_arg( 'd', 'all' ) ); ?>"><?php esc_html_e( 'Voir tout', 'woocommerce' ); ?></a>
 		</div>
+		
 	<?php endif; ?>
 
 <?php else : ?>

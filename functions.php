@@ -172,7 +172,7 @@ if(!function_exists('woo_errors')) {
  * 
  * */
 function woa_theme_styles(){
-    if( is_page( 123 ) )
+    if( is_page( 94 ) )
         wp_enqueue_style('woa-front', WAS_CSS_URL .'/front.css', array(), time());
 }
 
