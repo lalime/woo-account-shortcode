@@ -47,12 +47,13 @@ function woo_needed_admin_notice() {
      </div>';
 }
 
-add_action('init', 'save_user');
+// add_action('init', 'save_user');
 // add_action('init', 'load_woocommerce_scripts');
 
 add_action('init', 'do_init');
 
 add_action('wp_head', 'woa_theme_styles');
+add_action('wp_enqueue_scripts', 'woa_enqueue_scripts');
 add_filter('woocommerce_available_payment_gateways', 'woa_available_pg');
 
 add_action( 'woocommerce_save_account_details', 'woa_override_redirect' );
@@ -65,6 +66,15 @@ add_action('acf/render_field_settings/type=text', 'woa_text_render_field_setting
 // add_filter('acf/prepare_field', 'my_admin_only_prepare_field');
 add_action('acf/render_field/type=text', 'woa_acf_render_field');
 
-require_once 'dompdf/autoload.inc.php';
+/**
+ * AJAX Actions
+ */
+add_action('wp_ajax_woa_secudeal_upload_handler', 'handle_form_data'); 
+add_action('wp_ajax_woa_secudeal_fetch_file', 'fetch_file');
+add_action('wp_ajax_woa_secudeal_delete_file', 'delete_file');
+
+// require_once 'dompdf/autoload.inc.php';
+
+include(dirname(__FILE__).'/ajax-process.php');
 include(dirname(__FILE__).'/functions.php');
 include(dirname(__FILE__).'/shortcodes.php');

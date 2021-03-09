@@ -58,11 +58,23 @@ function render_secudeal_form( $atts ) {
    
     $field_group_key = 'group_6041f8829e1e1';
     $user_id = get_current_user_id();
-		
+	$redirect = current_page_url();
+
+    wp_enqueue_style ( 'woa-basic-style' );
+    wp_enqueue_style ( 'woa-dzone-style' );
+    wp_enqueue_script ( 'woa-dzone-script' );
+    wp_enqueue_script ( 'woa-front-script' );
+	
     // enqueue
     acf_enqueue_scripts();
 
 	ob_start();
+    
+    if (isset($_GET['sdup']) && $_GET['sdup'] == 1) {
+        $message = __('Mise à jour réussie!', 'woo-shortcodes');
+
+        include(dirname(__FILE__) .'/views/notif/success.php');
+    }
 
     echo '<form class="woocommerce-secudealForm edit-account" action="" method="post">';
     // Allow $_POST data to persist across form submission attempts.
@@ -121,9 +133,10 @@ function render_secudeal_form( $atts ) {
     }
     ?>
 	<p>
-		<?php // wp_nonce_field( 'save_secudeal_details', 'save-secudeal-details-nonce' ); ?>
+        <input type="hidden" name="save_secudeal" value="<?php echo wp_create_nonce('save-sd-nonce'); ?>"/>
+        <input type="hidden" name="woas_redirect" value="<?php echo $redirect; ?>"/>
 		<button type="submit" class="secudeal-Button button" name="save_account_details" value="<?php esc_attr_e( 'Enregistrer', 'secudeal' ); ?>"><?php esc_html_e( 'Enregistrer', 'secudeal' ); ?></button>
-		<input type="hidden" name="action" value="save_secudeal_details" />
+		<input type="hidden" name="sd_action" value="save_secudeal_details" />
 	</p>
     <?php
     echo '</form>';

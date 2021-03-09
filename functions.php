@@ -89,7 +89,6 @@ function save_user( $user_id ) {
     }
 }
 
-
 /** 
  * Password reset process
  * 
@@ -174,6 +173,23 @@ if(!function_exists('woo_errors')) {
  * */
 function woa_theme_styles(){
     wp_enqueue_style('woa-front', WAS_CSS_URL .'/front.css', array(), time());
+}
+
+/** 
+ * Enqueue script
+ * 
+ * */
+function woa_enqueue_scripts(){
+    wp_register_style ( 'woa-basic-style', WAS_URL . 'vendor/dropzone/basic.min.css' );
+    wp_register_style ( 'woa-dzone-style', WAS_URL . 'vendor/dropzone/dropzone.min.css' );
+
+    wp_register_script ( 'woa-dzone-script', WAS_URL . 'vendor/dropzone/dropzone.min.js' );
+    wp_register_script ( 'woa-front-script', WAS_URL . 'js/front.js' );
+    wp_localize_script('woa-front-script', 'woa_front_cntrl', array(
+        'upload_file' => admin_url('admin-ajax.php?action=woa_secudeal_upload_handler'),
+        'fetch_file' => admin_url('admin-ajax.php?action=woa_secudeal_fetch_file'),
+        'delete_file' => admin_url('admin-ajax.php?action=woa_secudeal_delete_file'),
+    ));
 }
 
 function woa_available_pg($available_gateways){
@@ -457,8 +473,8 @@ function get_random_string($n) {
 function woa_text_render_field_settings( $field ) {
 	
 	acf_render_field_setting( $field, array(
-		'label'			=> __('Exclude words'),
-		'instructions'	=> __('Enter words separated by a comma'),
+		'label'			=> __('Type DU champ'),
+		'instructions'	=> __('Selectioner le rendu final'),
 		'name'			=> 'display_as',
 		'type'			=> 'select',
         'choices' 		=> array(
@@ -470,13 +486,41 @@ function woa_text_render_field_settings( $field ) {
 	
 }
 
-function woo_as_process_vendor_data( $field ) {
-    my_acf_save_post( $post_id );
+function woo_as_process_vendor_data( ) {
+   
+    if (isset($_POST['sd_action']) && $_POST['sd_action'] == 'save_secudeal_details') {
+
+        if (!is_user_logged_in()) {
+            return;
+        }
+
+        if (wp_verify_nonce($_POST['save_secudeal'], 'save-sd-nonce')) {
+            global $user_ID;
+            // wp_die(var_dump($_POST));
+
+            save_user( $user_ID );
+
+            // send password change email here (if WP doesn't)
+            wp_redirect(add_query_arg('sdup', 1, $_POST['woas_redirect']));
+            exit;
+        }
+    }
 }
 
 function woa_acf_render_field( $field ) {
     if ( empty($field['display_as']) || $field['display_as'] != 'gallery') 
         return ;
-    var_dump($field['value']);
+
+    $images = [];
+    
+    if(!empty($field['value'])) {
+        $images = explode(',', $field['value']);
+    }
     include dirname(__FILE__). '/views/gallery.php';
+}
+
+
+function get_image_path($id) {
+    $image_src = wp_get_attachment_image_src($id, 'full');
+    return str_replace(get_home_url()."/wp-content", WP_CONTENT_DIR, $image_src[0]);
 }
