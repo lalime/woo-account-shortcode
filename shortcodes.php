@@ -249,6 +249,10 @@ function render_user_profile_form() {
     $_billing_email = get_user_meta( $user_id, 'billing_email', true );
     $_billing_latitude = get_user_meta( $user_id, 'billing_latitude', true );
     $_billing_longitude = get_user_meta( $user_id, 'billing_longitude', true );
+	
+    $_ven_longitude = get_user_meta( $user_id, 'ven_longitude', true );
+    $_ven_latitude = get_user_meta( $user_id, 'ven_latitude', true );
+    
     $_billing_zipcode = get_user_meta( $user_id, 'billing_zipcode', true );
     $_billing_city = get_user_meta( $user_id, 'billing_city', true );
     $_billing_country = get_user_meta( $user_id, 'billing_country', true );

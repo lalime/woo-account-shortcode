@@ -172,7 +172,8 @@ if(!function_exists('woo_errors')) {
  * 
  * */
 function woa_theme_styles(){
-    wp_enqueue_style('woa-front', WAS_CSS_URL .'/front.css', array(), time());
+    if( is_page( 123 ) )
+        wp_enqueue_style('woa-front', WAS_CSS_URL .'/front.css', array(), time());
 }
 
 /** 
@@ -523,4 +524,21 @@ function woa_acf_render_field( $field ) {
 function get_image_path($id) {
     $image_src = wp_get_attachment_image_src($id, 'full');
     return str_replace(get_home_url()."/wp-content", WP_CONTENT_DIR, $image_src[0]);
+}
+
+/* 
+ * Register settings 
+ */
+function woa_register_settings() 
+{
+    register_setting( 'general', 'vendor_acf_group', 'esc_attr' );
+    add_settings_field('vendor_acf_group', '<label for="vendor_acf_group">'.__('Vendor group?' , 'favorite_color' ).'</label>' ,  'fields_html', 'general' );
+}
+function fields_html() {
+    $vendor_acf_group = get_option( 'vendor_acf_group', '' );
+    $options = array();
+
+    $field_groups = acf_get_field_groups();
+
+    include dirname(__FILE__) .'/views/go-select-field.php';
 }

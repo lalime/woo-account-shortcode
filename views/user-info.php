@@ -35,6 +35,9 @@ $api_key = 'AIzaSyAzjJRFrisoG3IwYPRVimSRE2ToJ7zPY-E';
 		<input type="text" class="secudeal-Input secudeal-Input--text input-text" name="billing[billing_address_1]" id="billing_address_1" autocomplete="off" placeholder="Votre addresse" value="<?php echo esc_attr($_billing_address_1); ?>" />
 		<input type="hidden" id="billing_latitude" name="billing[billing_latitude]" value="<?php echo esc_attr($_billing_latitude); ?>" />
 		<input type="hidden" id="billing_longitude" name="billing[billing_longitude]" value="<?php echo esc_attr($_billing_longitude); ?>" />
+		<input type="hidden" id="ven_latitude" name="billing[ven_latitude]" value="<?php echo esc_attr($_ven_latitude); ?>" />
+		<input type="hidden" id="ven_longitude" name="billing[ven_longitude]" value="<?php echo esc_attr($_ven_longitude); ?>" />
+
 		<input type="hidden" id="billing_country" name="billing[billing_country]" value="<?php echo esc_attr($_billing_country); ?>" />
 
 		<input type="hidden" id="billing_city" name="billing[billing_city]" value="<?php echo esc_attr($_billing_city); ?>" />
@@ -77,7 +80,7 @@ $api_key = 'AIzaSyAzjJRFrisoG3IwYPRVimSRE2ToJ7zPY-E';
 	function initAutocomplete() {
 		
 		const options = {
-			fields: ["address_components", "geometry", "icon", "name"],
+			fields: ["address_components", "geometry", "name", "formatted_address"],
 			strictBounds: false,
 			types: ["establishment"],
 		};
@@ -127,6 +130,9 @@ $api_key = 'AIzaSyAzjJRFrisoG3IwYPRVimSRE2ToJ7zPY-E';
 		// and then fill-in the corresponding field on the form
 		document.getElementById('billing_latitude').value = place.geometry['location'].lat();
 		document.getElementById("billing_longitude").value = place.geometry['location'].lng();
+		document.getElementById('ven_latitude').value = place.geometry['location'].lat();
+		document.getElementById("ven_longitude").value = place.geometry['location'].lng();
+
 		document.getElementById('billing_address_1').value = place.formatted_address;
 		document.getElementById("sd_vendor_address_data").value = place.formatted_address;
 	}
