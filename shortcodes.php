@@ -289,14 +289,25 @@ function render_user_gateways() {
     
     $before = '<div class="secudeal-payment_methods-fields">';
     $after = '</div>';
+	$redirect = current_page_url();
+    $woo_pgs = new WC_Gateway_Stripe();
+    $woo_pgs->payment_scripts();
+
+    wp_enqueue_script( 'stripe' );
+    wp_enqueue_script( 'woocommerce_stripe' );
 
 	ob_start();
 
     echo $before;
+
+    woocommerce_output_all_notices();
+
     if(!is_user_logged_in()) {
         include(dirname(__FILE__) .'/views/notif/guest.php'); 
     } else {
         woocommerce_account_payment_methods();
+
+        include(dirname(__FILE__) .'/views/add-payment.php'); 
     }
 
     echo $after;

@@ -38,16 +38,17 @@ label {
     display: block !important;
     font-weight: bold !Important;
 }
-.secudeal-payment_methods-fields a.button {
+.secudeal-payment_methods-fields > a.button {
     display: none;
 }
-.secudeal-payment_methods-fields .woocommerce-PaymentMethod,
+.secudeal-payment_methods-fields .woocommerce-PaymentMethod table tr,
 .text-center { text-align: center; }
 
-/* h1 {
-    text-shadow: gray 3px 3px 3px; 
-    box-shadow: gray 3px 3px 3px 3px; 
-} */
+.secudeal-payment_methods-fields .woocommerce-PaymentBox.woocommerce-PaymentBox--stripe.payment_box.payment_method_stripe {
+    display: block!important;
+}
+
+
 .woa-thumbnails img {
     height: 80px;
     padding: 1px;

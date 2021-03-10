@@ -48,16 +48,17 @@ function woo_needed_admin_notice() {
 }
 
 // add_action('init', 'save_user');
-// add_action('init', 'load_woocommerce_scripts');
 
 add_action('init', 'do_init');
+add_action( 'admin_init', 'woa_register_settings' );
 
 add_action('wp_head', 'woa_theme_styles');
 add_action('wp_enqueue_scripts', 'woa_enqueue_scripts');
 add_filter('woocommerce_available_payment_gateways', 'woa_available_pg');
 
-add_action( 'woocommerce_save_account_details', 'woa_override_redirect' );
-add_action( 'woocommerce_customer_save_address', 'woa_override_redirect' );
+// add_action( 'woocommerce_save_account_details', 'woa_override_redirect' );
+// add_action( 'woocommerce_customer_save_address', 'woa_override_redirect' );
+add_action( 'wc_stripe_add_payment_method_success', 'woa_override_redirect' );
 
 /**
  * ACF Overrides

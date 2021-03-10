@@ -7,11 +7,15 @@
 function do_init() {
     custom_query_vars();
     wpdocs_load_textdomain();
+
     woo_as_reset_password();
     woo_as_process_dispute();
     woo_as_process_user_infos();
     woo_as_process_quote();
     woo_as_process_vendor_data();
+
+    // Load woocommerce stylesheet
+    // load_woocommerce_scripts();
 }
   
 /**
@@ -210,11 +214,11 @@ function woa_available_pg($available_gateways){
  * 
  * */
 function woa_override_redirect($user_id) {
-    // die(var_dump($_POST));
+    die(var_dump($_POST));
 
 	ob_start();
-    if ( isset($_POST['_wp_http_referer']) && get_the_Id() == WOA_ENDPOINT_URL):
-        $redirect_url = $_POST['_wp_http_referer'];
+    if ( isset($_POST['woas_redirect'])):
+        $redirect_url = $_POST['woas_redirect'];
     else :
         return $user_id;
     endif;
@@ -226,7 +230,7 @@ function woa_override_redirect($user_id) {
 
 function load_woocommerce_scripts() {
 
-    if ( get_the_Id() == WOA_ENDPOINT_URL):
+    if ( get_the_Id() == 94):
         include_once WC_ABSPATH . 'includes/class-wc-frontend-scripts.php';
     endif;
 }
@@ -403,6 +407,7 @@ function woo_as_process_quote() {
 
                 $subject = 'Nouveau devis';
                 $attachments = array( $file );
+                $to = $quote_email;
                 $headers = 'From: '. $current_user->user_firstname .' '. $current_user->user_lastname .' <'. $current_user->user_email .'>' . "\r\n";
                 
                 add_filter( 'wp_mail_content_type', 'set_html_content_type' );
@@ -520,7 +525,6 @@ function woa_acf_render_field( $field ) {
     include dirname(__FILE__). '/views/gallery.php';
 }
 
-
 function get_image_path($id) {
     $image_src = wp_get_attachment_image_src($id, 'full');
     return str_replace(get_home_url()."/wp-content", WP_CONTENT_DIR, $image_src[0]);
@@ -534,6 +538,7 @@ function woa_register_settings()
     register_setting( 'general', 'vendor_acf_group', 'esc_attr' );
     add_settings_field('vendor_acf_group', '<label for="vendor_acf_group">'.__('Vendor group?' , 'favorite_color' ).'</label>' ,  'fields_html', 'general' );
 }
+
 function fields_html() {
     $vendor_acf_group = get_option( 'vendor_acf_group', '' );
     $options = array();
